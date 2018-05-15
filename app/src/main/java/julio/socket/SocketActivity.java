@@ -7,6 +7,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Switch;
+import android.widget.Toast;
 
 import org.json.JSONObject;
 
@@ -44,34 +45,7 @@ public class SocketActivity extends AppCompatActivity {
         Connect.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View v) {
-                // socket_init();
-                String uri = "http://"+Host.getText()+":"+Port.getText();
-                Log.d("URI: ", uri);
-                socket = IO.socket(URI.create(uri));
-
-                socket.on("server_checked", new Emitter.Listener() {
-                    @Override
-                    public void call(Object... args) {
-                        try {
-                            JSONObject obj = (JSONObject)args[0];
-                            Log.d("OnChecked: ", "" + obj.getBoolean("checked_1"));
-                            Log.d("OnChecked: ", "" + obj.getBoolean("checked_2"));
-
-                            sw1_status = obj.getBoolean("checked_1");
-                            sw2_status = obj.getBoolean("checked_2");
-
-                            Switch_1.setChecked(sw1_status);
-                            Switch_2.setChecked(sw2_status);
-
-                        } catch (Exception e) {
-                            System.out.println(e.toString());
-                            Log.d("Error: ", e.toString());
-                        }
-                    }
-                });
-
-                socket.connect();
-                Log.d("Socket: ", socket.toString());
+                socket_init();
             }
         });
 
@@ -83,10 +57,9 @@ public class SocketActivity extends AppCompatActivity {
                     obj.put("checked_1", Switch_1.isChecked());
                     obj.put("checked_2", Switch_2.isChecked());
                     socket.emit("client_checked",obj);
-                    Log.d("Emit: ", obj.toString());
+                    Log.d("EmitSwitch1", obj.toString());
                 } catch (Exception e) {
-                    System.out.println(e.toString());
-                    Log.d("Error: ", e.toString());
+                    Log.d("ErrorSwitch1", e.toString());
                 }
             }
         });
@@ -99,41 +72,44 @@ public class SocketActivity extends AppCompatActivity {
                     obj.put("checked_1", Switch_1.isChecked());
                     obj.put("checked_2", Switch_2.isChecked());
                     socket.emit("client_checked",obj);
-                    Log.d("Emit: ", obj.toString());
+                    Log.d("EmitSwitch2", obj.toString());
                 } catch (Exception e) {
                     System.out.println(e.toString());
-                    Log.d("Error: ", e.toString());
+                    Log.d("ErrorSwitch2", e.toString());
                 }
             }
         });
     }
 
     private void socket_init () {
-        String uri = "http://"+Host.getText()+":"+Port.getText();
-        Log.d("URI: ", uri);
-        socket = IO.socket(URI.create(uri));
-
-        socket.on("server_checked", new Emitter.Listener() {
-            @Override
-            public void call(Object... args) {
-                try {
-                    JSONObject obj = (JSONObject)args[0];
-                    Log.d("OnChecked: ", "" + obj.getBoolean("checked_1"));
-                    Log.d("OnChecked: ", "" + obj.getBoolean("checked_2"));
-                    sw1_status = obj.getBoolean("checked_1");
-                    sw2_status = obj.getBoolean("checked_2");
-
-                    Switch_1.setChecked(sw1_status);
-                    Switch_2.setChecked(sw2_status);
-
-                } catch (Exception e) {
-                    System.out.println(e.toString());
-                    Log.d("Error: ", e.toString());
-                }
-            }
-        });
-
-        socket.connect();
-        Log.d("Socket: ", socket.toString());
+        try {
+            String uri = Host.getText() + ":" + Port.getText();
+            socket = IO.socket(URI.create(uri));
+            socket.on("server_checked", serverChecked);
+            socket.connect();
+            Toast.makeText(getApplicationContext(),"Connected: " + uri,Toast.LENGTH_LONG).show();
+            Log.d("SocketInit","Connected!");
+        } catch (Exception e) {
+            Log.d("ErrorSocketInit", e.toString());
+        }
     }
+
+    private Emitter.Listener serverChecked = new Emitter.Listener() {
+        @Override
+        public void call(final Object... args) {
+            runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    try {
+                        JSONObject obj = (JSONObject)args[0];
+                        Switch_1.setChecked(obj.getBoolean("checked_1"));
+                        Switch_2.setChecked(obj.getBoolean("checked_2"));
+                        Log.d("ServerChecked", obj.toString());
+                    } catch (Exception e) {
+                        Log.d("ErrorServerChecked", e.toString());
+                    }
+                }
+            });
+        }
+    };
 }
