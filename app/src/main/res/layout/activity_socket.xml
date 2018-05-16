@@ -11,52 +11,17 @@
         android:layout_height="match_parent"
         android:orientation="vertical">
 
-        <LinearLayout
+        <Switch
+            android:id="@+id/switch1"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical">
+            android:text="Switch 1" />
 
-            <EditText
-                android:id="@+id/host"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:ems="10"
-                android:inputType="textPersonName"
-                android:text="Host" />
-
-            <EditText
-                android:id="@+id/port"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:ems="10"
-                android:inputType="number"
-                tools:text="Port" />
-
-            <Button
-                android:id="@+id/conection"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="Connection" />
-
-        </LinearLayout>
-
-        <LinearLayout
+        <Switch
+            android:id="@+id/switch2"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:orientation="vertical">
-
-            <Switch
-                android:id="@+id/switch1"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="Switch 1" />
-
-            <Switch
-                android:id="@+id/switch2"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="Switch 2" />
-        </LinearLayout>
+            android:layout_height="wrap_content"
+            android:text="Switch 2" />
     </LinearLayout>
 
 </android.support.constraint.ConstraintLayout>
